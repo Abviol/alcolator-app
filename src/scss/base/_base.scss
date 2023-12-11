@@ -1,0 +1,45 @@
+﻿@import '../utilities/mixins';
+
+body {
+   background-color: white;
+}
+
+.main {
+   padding-top: 1rem;
+   padding-bottom: 1rem;
+
+   @include respond-to('large') {
+      padding-top: 7.5rem;
+      padding-bottom: 5rem;
+   }
+
+   @include respond-to('x-large') {
+      padding-top: 12.5rem;
+      padding-bottom: 7.5rem;
+   }
+}
+
+.container {
+   max-width: 100%;
+   width: 100%;
+   margin-left: auto;
+   margin-right: auto;
+   padding-left: 1rem;
+   padding-right: 1rem;
+
+   @include respond-to('small') {
+      max-width: 540px;
+   }
+   @include respond-to('medium') {
+      max-width: 720px;
+   }
+   @include respond-to('large') {
+      max-width: 960px;
+   }
+   @include respond-to('x-large') {
+      max-width: 1140px;
+   }
+   @include respond-to('xx-large') {
+      max-width: 1320px;
+   }
+}

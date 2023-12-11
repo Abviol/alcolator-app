@@ -1,0 +1,28 @@
+﻿$breakpoints: (
+   'small': (min-width: 576px),
+   'medium': (min-width: 768px),
+   'large': (min-width: 992px),
+   'x-large': (min-width: 1200px),
+   'xx-large': (min-width: 1400px),
+);
+
+$colors: (
+   'body-bg': #fff,
+   'block-question-bg': #fff2f8,
+   'block-question-border': #fdd4e7,
+   'input-bg': #fdd4e7,
+   'input-text': #8D5A76,
+   'radiobutton': #000,
+   'block-warning-bg': #fef9c8,
+   'block-warning-border': #ece28c,
+   'button-bg': #f55daf,
+);
+
+$fontWeights: (
+   'brand': 800,
+   'block-title': 700,
+   'block-text': 600,
+   'block-specific-info': 600,
+   'block-more-specific-info': 700,
+   'button': 800,
+)
