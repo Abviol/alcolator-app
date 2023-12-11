@@ -1,0 +1,33 @@
+﻿.header {
+   @include padding-y(1rem);
+   border-bottom: black 1px solid;
+
+   @include respond-to('large') {
+      @include padding-y(1.5rem);
+   }
+   @include respond-to('x-large') {
+      @include padding-y(2rem);
+   }
+}
+
+.navbar {
+   display: flex;
+   position: relative;
+   justify-content: center;
+   align-items: center;
+}
+
+.brand {
+   max-width: min-content;
+   font-weight: map-get($map: $fontWeights, $key: 'brand');
+   font-size: 28px;
+      @include respond-to('medium') {
+         font-size: 32px;
+      }
+      @include respond-to('large') {
+         font-size: 36px;
+      }
+      @include respond-to('x-large') {
+         font-size: 40px;
+      }
+}

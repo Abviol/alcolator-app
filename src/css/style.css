@@ -170,4 +170,50 @@ body {
   font-family: Nunito;
 }
 
+.header {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: black 1px solid;
+}
+@media (min-width: 992px) {
+  .header {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .header {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.navbar {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.brand {
+  max-width: min-content;
+  font-weight: 800;
+  font-size: 28px;
+}
+@media (min-width: 768px) {
+  .brand {
+    font-size: 32px;
+  }
+}
+@media (min-width: 992px) {
+  .brand {
+    font-size: 36px;
+  }
+}
+@media (min-width: 1200px) {
+  .brand {
+    font-size: 40px;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */

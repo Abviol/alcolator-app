@@ -18,3 +18,12 @@
    }
 }
 
+@mixin padding-y($padding) {
+   padding-top: $padding;
+   padding-bottom: $padding;
+}
+
+// @mixin padding-x($padding) {
+//    padding-left: $padding;
+//    padding-right: $padding;
+// }
