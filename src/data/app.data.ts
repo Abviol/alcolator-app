@@ -1,0 +1,1 @@
+﻿export const app_title:string = 'Alcolator'
