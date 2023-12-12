@@ -1,0 +1,27 @@
+﻿@import '../utilities/mixins';
+
+/* general input */
+.input {
+   display: block;
+   width: 100%;
+   font: inherit;
+   padding: .5rem;
+   border: none;
+   border-radius: .25rem;
+
+   @include respond-to('medium') {
+      padding: .75rem;
+      border-radius: .5rem;
+   }
+
+   @include respond-to('large') {
+      padding: 1rem;
+      border-radius: .75rem;
+   }
+}
+
+/* input for question block */
+.input-question {
+   background-color: map-get($map: $colors, $key: 'input-bg');
+   color: map-get($map: $colors, $key: 'input-text');
+}
