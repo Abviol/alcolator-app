@@ -27,3 +27,19 @@
 //    padding-left: $padding;
 //    padding-right: $padding;
 // }
+
+@mixin block($bg-color, $border-color) {
+   background-color: $bg-color;
+   border: 1px solid $border-color;
+   border-bottom: 3px solid $border-color;
+
+   @include respond-to('medium') {
+      border: 2px solid $border-color;
+      border-bottom: 5px solid $border-color;
+   }
+
+   @include respond-to('x-large') {
+      border: 3px solid $border-color;
+      border-bottom: 8px solid $border-color;
+   }
+}

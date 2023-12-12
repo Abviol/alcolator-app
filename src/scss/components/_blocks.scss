@@ -1,0 +1,107 @@
+﻿@import '../utilities/mixins';
+@import '../utilities/vars';
+
+.block {
+   display: block;
+   width: 100%;
+   border-radius: .5rem;
+   
+   @include respond-to('medium') {
+      border-radius: .75rem;
+   }
+
+   @include respond-to('large') {
+      border-radius: 1rem;
+   }
+
+   @include respond-to('x-large') {
+      border-radius: 1.5rem;
+   }
+
+   &__container {
+      padding: 1rem;
+   
+      @include respond-to('medium') {
+         padding: 1.25rem;
+      }
+   
+      @include respond-to('large') {
+         padding: 1.5rem;
+      }
+   
+      @include respond-to('x-large') {
+         padding: 2rem;
+      }
+   }
+
+   &__title {
+      margin-bottom: 1.25rem;
+      font-size: 1rem;
+      font-weight: map-get($map: $fontWeights, $key: 'block-title');
+      
+      @include respond-to('medium') {
+         font-size: 1.25rem;
+         margin-bottom: 1.5rem;
+      }
+   
+      @include respond-to('large') {
+         font-size: 1.375rem;
+         margin-bottom: 1.75rem;
+      }
+   
+      @include respond-to('x-large') {
+         font-size: 1.75rem;
+         margin-bottom: 2rem;
+      }
+   }
+
+   &__content {
+      display: flex;
+      flex-direction: column;
+      row-gap: .5rem;
+      font-size: .75rem;
+      font-weight: map-get($map: $fontWeights, $key: 'block-text');
+
+      @include respond-to('medium') {
+         font-size: .875rem;
+         row-gap: 1.25rem;
+      }
+
+      @include respond-to('large') {
+         font-size: 1.125rem;
+      }
+
+      @include respond-to('x-large') {
+         font-size: 1.25rem;
+         row-gap: 1.5rem;
+      }
+   }
+}
+
+.main__block {
+   margin-bottom: 1rem;
+
+   @include respond-to('medium') {
+      margin-bottom: 1.5rem;
+   }
+
+   @include respond-to('large') {
+      margin-bottom: 2.25rem;
+   }
+
+   @include respond-to('x-large') {
+      margin-bottom: 2.5rem;
+   }
+}
+
+.block-question {
+   $bg-color: map-get($colors, 'block-question-bg');
+   $border-color: map-get($colors, 'block-question-border');
+   @include block($bg-color, $border-color)
+}
+
+.block-warning {
+   $bg-color: map-get($colors, 'block-warning-bg');
+   $border-color: map-get($colors, 'block-warning-border');
+   @include block($bg-color, $border-color)
+}
