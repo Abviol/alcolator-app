@@ -5,16 +5,20 @@
    display: block;
    width: 100%;
    border-radius: .5rem;
-   
+   margin-bottom: 1rem;
+     
    @include respond-to('medium') {
+      margin-bottom: 1.5rem;
       border-radius: .75rem;
    }
 
    @include respond-to('large') {
+      margin-bottom: 2.25rem;
       border-radius: 1rem;
    }
 
    @include respond-to('x-large') {
+      margin-bottom: 2.5rem;
       border-radius: 1.5rem;
    }
 
@@ -78,22 +82,6 @@
    }
 }
 
-.main__block {
-   margin-bottom: 1rem;
-
-   @include respond-to('medium') {
-      margin-bottom: 1.5rem;
-   }
-
-   @include respond-to('large') {
-      margin-bottom: 2.25rem;
-   }
-
-   @include respond-to('x-large') {
-      margin-bottom: 2.5rem;
-   }
-}
-
 .block-question {
    $bg-color: map-get($colors, 'block-question-bg');
    $border-color: map-get($colors, 'block-question-border');
@@ -103,5 +91,5 @@
 .block-warning {
    $bg-color: map-get($colors, 'block-warning-bg');
    $border-color: map-get($colors, 'block-warning-border');
-   @include block($bg-color, $border-color)
+   @include block($bg-color, $border-color); 
 }

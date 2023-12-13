@@ -221,19 +221,23 @@ body {
   display: block;
   width: 100%;
   border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 @media (min-width: 768px) {
   .block {
+    margin-bottom: 1.5rem;
     border-radius: 0.75rem;
   }
 }
 @media (min-width: 992px) {
   .block {
+    margin-bottom: 2.25rem;
     border-radius: 1rem;
   }
 }
 @media (min-width: 1200px) {
   .block {
+    margin-bottom: 2.5rem;
     border-radius: 1.5rem;
   }
 }
@@ -303,25 +307,6 @@ body {
   }
 }
 
-.main__block {
-  margin-bottom: 1rem;
-}
-@media (min-width: 768px) {
-  .main__block {
-    margin-bottom: 1.5rem;
-  }
-}
-@media (min-width: 992px) {
-  .main__block {
-    margin-bottom: 2.25rem;
-  }
-}
-@media (min-width: 1200px) {
-  .main__block {
-    margin-bottom: 2.5rem;
-  }
-}
-
 .block-question {
   background-color: #fff2f8;
   border: 1px solid #fdd4e7;
@@ -384,6 +369,55 @@ body {
 .input-question {
   background-color: #fdd4e7;
   color: #8D5A76;
+}
+.input-question::placeholder {
+  color: #c192aa;
+}
+
+.radio-button {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: fit-content;
+  flex-direction: column;
+  justify-content: center;
+}
+.radio-button > input[type=radio] {
+  visibility: hidden;
+  display: none;
+}
+.radio-button__label {
+  position: relative;
+  padding: 0.5rem;
+  padding-left: 2rem;
+  cursor: pointer;
+}
+.radio-button__button {
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: transparent;
+  border-radius: 100%;
+  border: 2px solid #353535;
+  pointer-events: none;
+}
+.radio-button__button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 100%;
+  background-color: #353535;
+  transition: all ease 0.1s;
+}
+.radio-button > input[type=radio]:checked ~ .radio-button__button::before {
+  width: 0.875rem;
+  height: 0.875rem;
+  transition: all ease 0.1s;
 }
 
 /*# sourceMappingURL=style.css.map */

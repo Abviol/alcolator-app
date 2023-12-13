@@ -1,7 +1,11 @@
 ﻿import * as React from 'react';
 
-export function Input() {
+interface InputProps {
+   placeholder: string
+}
+
+export function Input({placeholder}: InputProps) {
    return (
-      <input type="text" className="input input-question" placeholder='Placeholder' />
+      <input type="text" className="input input-question" placeholder={placeholder} />
    )
 }
