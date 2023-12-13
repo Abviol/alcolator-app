@@ -49,6 +49,7 @@
       padding: $padding;
       padding-left: calc($padding + 1.5rem);
       cursor: pointer;
+      @include prevent-select-text;
    }
 
    &__button {
@@ -76,6 +77,61 @@
    }
 
    & > input[type=radio]:checked ~ &__button::before {
+      width: .875rem;
+      height: .875rem;
+      transition: all ease .1s;
+   }
+}
+
+.checkbox {
+   $color: map-get($map: $colors, $key: 'checkbox');
+   position: relative;
+   display: flex;
+   height: 100%;
+   width: fit-content;
+   flex-direction: column;
+   justify-content: center;
+
+   & > input[type=checkbox] {
+      visibility: hidden;
+      display: none;
+   }
+
+   &__label {
+      $padding: .5rem;
+      position: relative;
+      padding: $padding;
+      padding-left: calc($padding + 1.5rem);
+      cursor: pointer;
+      @include prevent-select-text;
+   }
+
+   &__button {
+      $size: 1.5rem;
+      position: absolute;
+      left: 0;
+      width: $size;
+      height: $size;
+      background: transparent;
+      border-radius: 100%;
+      border: 2px solid $color;
+      pointer-events: none;
+
+      &::before {
+         content: '';
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         width: 0;
+         height: 0;
+         transform: translate(-50%, -50%);
+         border-radius: 100%;
+         background-color: $color;
+         transition: all ease .1s;
+      }
+   }
+
+   & > input[type=checkbox]:checked ~ &__button::before {
       width: .875rem;
       height: .875rem;
       transition: all ease .1s;

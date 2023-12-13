@@ -43,3 +43,9 @@
       border-bottom: 8px solid $border-color;
    }
 }
+
+@mixin prevent-select-text {
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
