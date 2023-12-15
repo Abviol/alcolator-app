@@ -82,7 +82,7 @@
    }
 }
 
-.block-question {
+.block-common {
    $bg-color: map-get($colors, 'block-question-bg');
    $border-color: map-get($colors, 'block-question-border');
    @include block($bg-color, $border-color)
