@@ -22,5 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#style.css.map
-/src/css/style.css.map
+#css
+/src/css/*.css
+/src/css/*.css.map
