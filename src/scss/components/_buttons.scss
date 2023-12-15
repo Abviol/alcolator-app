@@ -1,0 +1,91 @@
+﻿@import '../utilities/mixins';
+
+.button {
+
+   appearance: none;
+   -webkit-appearance: none;
+   cursor: pointer;
+
+   $border-color: map-get($map: $colors, $key: 'button-border');
+   $bg-color: map-get($map: $colors, $key: 'button-bg');
+
+   display: block;
+   background-color: $bg-color;
+   @include border(2px, 5px, $border-color);
+
+   @include respond-to('medium') {
+      @include border(3px, 8px, $border-color);
+   }
+   @include respond-to('x-large') {
+      @include border(4px, 9px, $border-color);
+   }
+
+   &__text {
+      font-size: 1.5rem;
+      font-weight: map-get($map: $fontWeights, $key: 'button');
+
+      @include respond-to('medium') {
+         font-size: 1.75rem;
+      }
+      @include respond-to('large') {
+         font-size: 1.875rem;
+      }
+      @include respond-to('x-large') {
+         font-size: 2rem;
+      }
+   }
+   
+   &_submit {
+      width: 100%;
+      @include padding-y(.5rem);
+      border-radius: 100rem;
+
+      @include respond-to('medium') {
+         @include padding-y(.75rem);
+      }
+      @include respond-to('large') {
+         @include padding-y(1rem);
+         width: 22.5rem;
+      }
+      @include respond-to('x-large') {
+         @include padding-y(1.125rem);
+         width: 28rem;
+      }
+   }
+
+   &_up {
+      position: fixed;
+      bottom: -5rem;
+      right: 1.5rem;
+      border-radius: .5rem;
+      padding: .5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: .2s bottom ease-in-out;
+
+      @include respond-to('medium') {
+         padding: .625rem;
+         border-radius: .5rem;
+      }
+
+      & > svg {
+         width: 1.5rem;
+         height: 1.5rem;
+
+         @include respond-to('medium') {
+            width: 2rem;
+            height: 2rem;
+         }
+      }
+
+      &_show {
+         bottom: 5rem;
+
+         @include respond-to('medium') {
+            bottom: 6rem;
+         }
+      }
+   }
+
+}
