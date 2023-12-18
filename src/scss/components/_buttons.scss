@@ -54,10 +54,12 @@
    }
 
    &_up {
+      $border-radius: .5rem;
+
       position: fixed;
       bottom: -5rem;
       right: 1.5rem;
-      border-radius: .5rem;
+      border-radius: $border-radius;
       padding: .5rem;
       display: flex;
       justify-content: center;
@@ -66,7 +68,7 @@
 
       @include respond-to('medium') {
          padding: .625rem;
-         border-radius: .5rem;
+         $border-radius: .75rem;
       }
 
       & > svg {

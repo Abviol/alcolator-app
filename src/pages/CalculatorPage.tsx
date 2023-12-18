@@ -4,8 +4,20 @@ import { Block } from '../components/block';
 import { Input } from '../components/input';
 import { RadioButton } from '../components/radioBatton';
 import { Checkbox } from '../components/checkbox';
+import { useNavigate } from 'react-router-dom';
 
 function CalculatorPage() {
+
+   //i Start calculation logic
+   const navigate = useNavigate();
+
+   function calculateResults() {
+      navigate('/results');
+   }
+
+   //i End calculation logic
+
+
    //i Start show/hide go-up button
    const [showButton, setShowButton] = useState(false)
 
@@ -45,7 +57,7 @@ function CalculatorPage() {
 
    return (
       <>
-         <Header />
+         <Header title='Alcolator' />
          <main className="main">
             <div className="container">
 
@@ -151,7 +163,7 @@ function CalculatorPage() {
                {/* //s End Smoking block */}
 
                <div className="align-center">
-                  <button type='submit' className='button button_submit'>
+                  <button type='submit' className='button button_submit' onClick={calculateResults}>
                      <p className="button__text">
                         Calculate
                      </p>

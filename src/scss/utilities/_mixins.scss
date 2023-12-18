@@ -23,10 +23,10 @@
    padding-bottom: $padding;
 }
 
-// @mixin padding-x($padding) {
-//    padding-left: $padding;
-//    padding-right: $padding;
-// }
+@mixin padding-x($padding) {
+   padding-left: $padding;
+   padding-right: $padding;
+}
 
 @mixin block($bg-color, $border-color) {
    background-color: $bg-color;
@@ -51,6 +51,6 @@
 }
 
 @mixin border($common-size, $bottom-size, $color) {
-    border: $common-size solid $color;
-    border-bottom: $bottom-size solid $color;
+   border: $common-size solid $color;
+   border-bottom: $bottom-size solid $color;
 }

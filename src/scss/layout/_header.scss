@@ -1,4 +1,9 @@
-﻿.header {
+﻿@import '../utilities/mixins';
+
+.header {
+
+   position: relative;
+
    @include padding-y(1rem);
    border-bottom: black 1px solid;
 
@@ -7,6 +12,23 @@
    }
    @include respond-to('x-large') {
       @include padding-y(2rem);
+   }
+
+   &__icon-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 1rem;
+      transform: translateY(-50%);
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      
+      @include respond-to('large') {
+         left: 2rem;
+      }
    }
 }
 
