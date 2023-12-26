@@ -6,9 +6,10 @@ interface BlockProps {
    children: React.ReactNode
    type?: Block
    title: string
+   id?: string
 }
 
-export function Block({children, type, title}: BlockProps) {
+export function Block({children, type, title, id}: BlockProps) {
 
    var blockClass;
    switch(type) {
@@ -20,7 +21,7 @@ export function Block({children, type, title}: BlockProps) {
    }
 
    return(
-      <div className={blockClass}>
+      <div className={blockClass} id={id}>
          <div className="block__container">
             <h4 className="block__title">{ title }</h4>
             <div className="block__content">

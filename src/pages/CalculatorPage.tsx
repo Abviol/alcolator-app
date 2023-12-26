@@ -5,16 +5,101 @@ import { Input } from '../components/input';
 import { RadioButton } from '../components/radioBatton';
 import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
+import { IQuestions } from '../models';
+import { coefficients } from '../data/app.data';
+
+function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): number {
+   let widmarkFactor: number = 0;
+   switch (gender) {
+      case 'male':
+         widmarkFactor = 1.0181 - 0.01213 * weight / (heightInCm / 100) ** 2;
+         break;
+      case 'female':
+         widmarkFactor = 0.9367 - 0.01240 * weight / (heightInCm / 100) ** 2;
+         break;
+   }
+   console.log(widmarkFactor)
+   return widmarkFactor;
+}
 
 function CalculatorPage() {
+
+   //? State variables for selected answers
+   const [gender, setGender] = useState('');
+   const [weight, setWeight] = useState(0);
+   const [height, setHeight] = useState(0);
+   const [drinkStrength, setDrinkStrength] = useState(0);
+   const [snacksCoefficient, setSnacksCoefficient] = useState(0);
+   const [placeOfBenderCoefficient, setPlaceOfBenderCoefficient] = useState(0);
+   const [drinkingBuddiesCoefficient, setDrinkingBuddiesCoefficient] = useState(0);
+   const [drinkerLevelCoefficient, setDrinkerLevelCoefficient] = useState(0);
+   const [hangoverFrequencyCoefficient, setHangoverFrequencyCoefficient] = useState(0);
+   const [physicalActivityCoefficient, setPhysicalActivityCoefficient] = useState(0);
+   const [smokingCoefficient, setSmokingCoefficient] = useState(0);
+   const [goalCoefficient, setGoalCoefficient] = useState(0);
+
+   //? validation state
+   const [validationStatus, setValidationStatus] = useState<IQuestions>({
+      'gender': false,
+      'weight': false,
+      'height': false,
+      'drink-strength': false,
+      'snacks': false,
+      'place-of-bender': false,
+      'drinking-buddies': false,
+      'drinker-level': false,
+      'hangover-frequency': false,
+      'physical-activity': false,
+      'smoking': false,
+      'goal': false,
+   });
+
+   //? onChange handler
+   function onChangeHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
+      const blockName = e.target.closest('.block').id
+      const value = (coefficients as any)[blockName][e.target.id.replace(e.target.name + '-', '')]
+      if ((validationStatus as any)[blockName] === false) setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: true }))
+      setState(value)
+      console.log(`${blockName}: ${value}`)
+   }
+
+   //? onInput handler
+   let timeout: any;
+   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+         const blockName = e.target.closest('.block').id
+         const value = e.target.value
+         setState(value);
+         if ((validationStatus as any)[blockName] === false) setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: true }))
+         if (value === '') setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: false }))
+         console.log(`${blockName}: ${value}`)
+      }, 1000)
+   }
 
    //i Start calculation logic
    const navigate = useNavigate();
 
    function calculateResults() {
-      navigate('/results');
-   }
 
+      const isValid = Object.values(validationStatus).every((status) => status);
+
+      if (!isValid) {
+         const firstInvalidBlock = Object.keys(validationStatus).find((block) => !(validationStatus as any)[block]);
+         const element = document.getElementById(`${firstInvalidBlock}`);
+         element?.scrollIntoView({ behavior: 'smooth' });
+         return;
+      }
+
+      let widmarkFactor = calcWidmarkFactor(gender, weight, height)
+      let totalCoefficient = snacksCoefficient * placeOfBenderCoefficient * drinkingBuddiesCoefficient * drinkerLevelCoefficient * hangoverFrequencyCoefficient * physicalActivityCoefficient * smokingCoefficient;
+      let volumeOfDrink = goalCoefficient * widmarkFactor * weight / (drinkStrength / 100 * 0.789) * totalCoefficient;
+
+      console.log('total coefficient:', totalCoefficient)
+      console.log('volume of drink to drink:', volumeOfDrink)
+
+      // navigate('/results');
+   }
    //i End calculation logic
 
 
@@ -38,8 +123,6 @@ function CalculatorPage() {
       };
    }, [])
 
-
-
    if (showButton) {
       document.querySelector('.button_up')?.classList.add('button_up_show')
    } else {
@@ -60,105 +143,98 @@ function CalculatorPage() {
          <Header title='Alcolator' />
          <main className="main">
             <div className="container">
-
-               {/* //s Start Kind-of-drink block */}
-               <Block title='Kind of drink'>
-                  <Input placeholder='E.g. Jägermeister' />
-                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Select custom strength' />
-                  <Input placeholder='1-99%' />
-               </Block>
-               {/* //s end Kind-of-drink block */}
-
                {/* //s Start Gender block */}
-               <Block title='Gender'>
-                  <RadioButton name='gender' id='male' text='Male' />
-                  <RadioButton name='gender' id='female' text='Female' />
+               <Block title='Gender' id='gender'>
+                  <RadioButton name='gender' id='gender-male' text='Male' onChange={(e) => onChangeHandler(e, setGender)} />
+                  <RadioButton name='gender' id='gender-female' text='Female' onChange={(e) => onChangeHandler(e, setGender)} />
                </Block>
                {/* //s End Gender block */}
 
                {/* //s Start Weight block */}
-               <Block title='Weight (kg)'>
-                  <Input placeholder='E.g. 80' />
+               <Block title='Weight (kg)' id='weight'>
+                  <Input placeholder='E.g. 80' onInput={(e) => onInputHandler(e, setWeight)} />
                </Block>
                {/* //s End Weight block */}
 
+               {/* //s Start Weight block */}
+               <Block title='Height (cm)' id='height'>
+                  <Input placeholder='E.g. 180' onInput={(e) => onInputHandler(e, setHeight)} />
+               </Block>
+               {/* //s End Weight block */}
+
+               {/* //s Start Drink-strength block */}
+               <Block title='Drink strength' id='drink-strength'>
+                  {/* <Input placeholder='E.g. Jägermeister' onInput={(e) => onInputHandler(e, setKindOfDrink)} />
+                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Select custom strength' /> */}
+                  <Input placeholder='1-99%' onInput={(e) => onInputHandler(e, setDrinkStrength)} />
+               </Block>
+               {/* //s end Kind-of-drink block */}
+
                {/* //s Start Snacks block */}
-               <Block title='Snacks'>
-                  <RadioButton name='snacks' id='snacks-no' text='No' />
-                  <RadioButton name='snacks' id='snacks-cold' text='Cold snacks' />
-                  <RadioButton name='snacks' id='snacks-hot' text='Hot snacks' />
+               <Block title='Snacks' id='snacks'>
+                  <RadioButton name='snacks' id='snacks-no' text='No' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
+                  <RadioButton name='snacks' id='snacks-cold' text='Cold snacks' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
+                  <RadioButton name='snacks' id='snacks-hot' text='Hot snacks' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
                </Block>
                {/* //s End Snacks block */}
 
-               {/* //s Start Previous-meal block */}
-               <Block title='Did you eat before?'>
-                  <RadioButton name='previous-meal' id='previous-meal-a-lot' text='Yes, a big portion' />
-                  <RadioButton name='previous-meal' id='previous-meal-a-bit' text='Yes, a little bit' />
-                  <RadioButton name='previous-meal' id='previous-meal-no' text='Not at all' />
-               </Block>
-               {/* //s End Previous-meal block */}
-
                {/* //s Start Place-of-bender block */}
-               <Block title='Where will you drink?'>
-                  <RadioButton name='place-of-bender' id='place-of-bender-indoors' text='Indoors' />
-                  <RadioButton name='place-of-bender' id='place-of-bender-outdoors' text='Outdoors' />
+               <Block title='Where will you drink?' id='place-of-bender'>
+                  <RadioButton name='place-of-bender' id='place-of-bender-at-home' text='At home' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
+                  <RadioButton name='place-of-bender' id='place-of-bender-in-a-bar' text='In a bar' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
+                  <RadioButton name='place-of-bender' id='place-of-bender-outdoors' text='Outdoors' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
                </Block>
                {/* //s End Place-of-bender block */}
 
-               {/* //s Start Temperature block */}
-               <Block title='Temperature outdoors (optional)'>
-                  <Input placeholder='From -20 to 40ºC' />
+               {/* //s Start Drinking-buddies block */}
+               <Block title='Who wil you drink with?' id='drinking-buddies'>
+                  <RadioButton name='drinking-buddies' id='drinking-buddies-alone' text='Alone' onChange={(e) => onChangeHandler(e, setDrinkingBuddiesCoefficient)} />
+                  <RadioButton name='drinking-buddies' id='drinking-buddies-with-friends' text='With friends' onChange={(e) => onChangeHandler(e, setDrinkingBuddiesCoefficient)} />
                </Block>
-               {/* //s End Temperature block */}
+               {/* //s End Place-of-bender block */}
 
                {/* //s Start Drinker-level block */}
-               <Block title='Your level'>
-                  <RadioButton name='drinker-level' id='drinker-level-new' text='New guy' />
-                  <RadioButton name='drinker-level' id='drinker-level-soldier' text='Soldier' />
-                  <RadioButton name='drinker-level' id='drinker-level-general' text='General' />
-                  <RadioButton name='drinker-level' id='drinker-level-major' text='Major' />
-                  <RadioButton name='drinker-level' id='drinker-level-officer' text='Officer' />
+               <Block title='Your level' id='drinker-level'>
+                  <RadioButton name='drinker-level' id='drinker-level-novice' text='Novice' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
+                  <RadioButton name='drinker-level' id='drinker-level-advanced-beginner' text='Advanced beginner' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
+                  <RadioButton name='drinker-level' id='drinker-level-competence' text='Competence' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
+                  <RadioButton name='drinker-level' id='drinker-level-specialist' text='Specialist' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
+                  <RadioButton name='drinker-level' id='drinker-level-expert' text='Expert' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
+                  <RadioButton name='drinker-level' id='drinker-level-master' text='Master' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
                </Block>
                {/* //s End Drinker-level block */}
 
                {/* //s Start Hangover-frequency block */}
-               <Block title='How often do you have hangover?'>
-                  <RadioButton name='hangover-frequency' id='hangover-never' text='Never' />
-                  <RadioButton name='hangover-frequency' id='hangover-hardly-ever' text='Hardly ever' />
-                  <RadioButton name='hangover-frequency' id='hangover-rarely' text='Rarely' />
-                  <RadioButton name='hangover-frequency' id='hangover-often' text='Often' />
-                  <RadioButton name='hangover-frequency' id='hangover-almost-always' text='Almost always' />
+               <Block title='How often do you have hangover?' id='hangover-frequency'>
+                  <RadioButton name='hangover-frequency' id='hangover-frequency-never' text='Never' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
+                  <RadioButton name='hangover-frequency' id='hangover-frequency-hardly-ever' text='Hardly ever' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
+                  <RadioButton name='hangover-frequency' id='hangover-frequency-rarely' text='Rarely' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
+                  <RadioButton name='hangover-frequency' id='hangover-frequency-often' text='Often' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
+                  <RadioButton name='hangover-frequency' id='hangover-frequency-almost-always' text='Almost always' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
                </Block>
                {/* //s End Drinker-level block */}
 
                {/* //s Start Physical-activity block */}
-               <Block title='Will you have any physical activity?'>
-                  <RadioButton name='physical-activity' id='physical-activity-yes' text='Yes' />
-                  <RadioButton name='physical-activity' id='physical-activity-no' text='No' />
+               <Block title='Will you have any physical activity?' id='physical-activity'>
+                  <RadioButton name='physical-activity' id='physical-activity-yes' text='Yes' onChange={(e) => onChangeHandler(e, setPhysicalActivityCoefficient)} />
+                  <RadioButton name='physical-activity' id='physical-activity-no' text='No' onChange={(e) => onChangeHandler(e, setPhysicalActivityCoefficient)} />
                </Block>
                {/* //s End Physical-activity block */}
 
-               {/* //s Start Alcohol-smell-acceptable block */}
-               <Block title='Is alcohol smell acceptable?'>
-                  <RadioButton name='alcohol-smell-acceptable' id='alcohol-smell-acceptable-yes' text='Yes' />
-                  <RadioButton name='alcohol-smell-acceptable' id='alcohol-smell-acceptable-no' text='No' />
-               </Block>
-               {/* //s End Alcohol-smell-acceptable block */}
-
                {/* //s Start Smoking block */}
-               <Block title='Do you smoke?'>
-                  <RadioButton name='smoking' id='smoking-yes' text='Yes' />
-                  <RadioButton name='smoking' id='smoking-no' text='No' />
+               <Block title='Do you smoke?' id='smoking'>
+                  <RadioButton name='smoking' id='smoking-yes' text='Yes' onChange={(e) => onChangeHandler(e, setSmokingCoefficient)} />
+                  <RadioButton name='smoking' id='smoking-no' text='No' onChange={(e) => onChangeHandler(e, setSmokingCoefficient)} />
                </Block>
                {/* //s End Smoking block */}
 
                {/* //s Start Goal block */}
-               <Block title='The goal of the bender'>
-                  <RadioButton name='goal' id='goal-1' text='Relax a bit' />
-                  <RadioButton name='goal' id='goal-2' text='Relax' />
-                  <RadioButton name='goal' id='goal-3' text='Have fun' />
-                  <RadioButton name='goal' id='goal-4' text='Get drunk' />
-                  <RadioButton name='goal' id='goal-5' text='Get drunk as hell' />
+               <Block title='The goal of the bender' id='goal'>
+                  <RadioButton name='goal' id='goal-relax-a-bit' text='Relax a bit' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
+                  <RadioButton name='goal' id='goal-relax' text='Relax' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
+                  <RadioButton name='goal' id='goal-have-fun' text='Have fun' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
+                  <RadioButton name='goal' id='goal-get-drunk' text='Get drunk' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
+                  <RadioButton name='goal' id='goal-get-drunk-as-hell' text='Get drunk as hell' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
                </Block>
                {/* //s End Smoking block */}
 
