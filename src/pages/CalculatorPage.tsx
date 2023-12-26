@@ -1,7 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Header } from '../components/header';
 import { Block } from '../components/block';
-import { Input } from '../components/input';
 import { RadioButton } from '../components/radioBatton';
 import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
@@ -152,13 +151,13 @@ function CalculatorPage() {
 
                {/* //s Start Weight block */}
                <Block title='Weight (kg)' id='weight'>
-                  <Input placeholder='E.g. 80' onInput={(e) => onInputHandler(e, setWeight)} />
+                  <input className="input input-question" placeholder='E.g. 80' onInput={(e) => onInputHandler(e, setWeight)} />
                </Block>
                {/* //s End Weight block */}
 
                {/* //s Start Weight block */}
                <Block title='Height (cm)' id='height'>
-                  <Input placeholder='E.g. 180' onInput={(e) => onInputHandler(e, setHeight)} />
+                  <input className="input input-question" placeholder='E.g. 180' onInput={(e) => onInputHandler(e, setHeight)} />
                </Block>
                {/* //s End Weight block */}
 
@@ -166,7 +165,7 @@ function CalculatorPage() {
                <Block title='Drink strength' id='drink-strength'>
                   {/* <Input placeholder='E.g. Jägermeister' onInput={(e) => onInputHandler(e, setKindOfDrink)} />
                   <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Select custom strength' /> */}
-                  <Input placeholder='1-99%' onInput={(e) => onInputHandler(e, setDrinkStrength)} />
+                  <input className="input input-question" placeholder='1-99%' onInput={(e) => onInputHandler(e, setDrinkStrength)} />
                </Block>
                {/* //s end Kind-of-drink block */}
 
