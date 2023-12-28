@@ -45,10 +45,10 @@ export const coefficients: IQuestions = {
       'no': 1,
    },
    'goal': {
-      'relax-a-bit': 0.5,
-      'relax': 0.9,
-      'have-fun': 1.2,
-      'get-drunk': 1.5,
-      'get-drunk-as-hell': 2,
+      'relax-a-bit': 0.3,
+      'relax': 0.6,
+      'have-fun': 0.9,
+      'get-drunk': 1.2,
+      'get-drunk-as-hell': 1.7,
    },
 }
