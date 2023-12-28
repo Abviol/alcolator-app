@@ -6,6 +6,7 @@ import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { IQuestions } from '../models';
 import { coefficients } from '../data/app.data';
+import { useResults } from '../ResultsContext';
 
 function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): number {
    let widmarkFactor: number = 0;
@@ -36,6 +37,8 @@ function CalculatorPage() {
    const [physicalActivityCoefficient, setPhysicalActivityCoefficient] = useState(0);
    const [smokingCoefficient, setSmokingCoefficient] = useState(0);
    const [goalCoefficient, setGoalCoefficient] = useState(0);
+
+   const results = useResults();
 
    //? validation state
    const [validationStatus, setValidationStatus] = useState<IQuestions>({
@@ -81,8 +84,8 @@ function CalculatorPage() {
 
    function calculateResults() {
 
+      //? validate the form
       const isValid = Object.values(validationStatus).every((status) => status);
-
       if (!isValid) {
          const firstInvalidBlock = Object.keys(validationStatus).find((block) => !(validationStatus as any)[block]);
          const element = document.getElementById(`${firstInvalidBlock}`);
@@ -90,14 +93,19 @@ function CalculatorPage() {
          return;
       }
 
+      //? calculate volume of drink to consume
       let widmarkFactor = calcWidmarkFactor(gender, weight, height)
       let totalCoefficient = snacksCoefficient * placeOfBenderCoefficient * drinkingBuddiesCoefficient * drinkerLevelCoefficient * hangoverFrequencyCoefficient * physicalActivityCoefficient * smokingCoefficient;
-      let volumeOfDrink = goalCoefficient * widmarkFactor * weight / (drinkStrength / 100 * 0.789) * totalCoefficient;
+      let volumeOfDrink = Math.floor(goalCoefficient * widmarkFactor * weight / (drinkStrength / 100 * 0.789) * totalCoefficient);
+
+      //? set values to pass to the results page through the ResultsContext
+      results?.drinkStrength.setValue(drinkStrength)
+      results?.volumeToDrink.setValue(volumeOfDrink)
 
       console.log('total coefficient:', totalCoefficient)
       console.log('volume of drink to drink:', volumeOfDrink)
 
-      // navigate('/results');
+      navigate('/results');
    }
    //i End calculation logic
 
