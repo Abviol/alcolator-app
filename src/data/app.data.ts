@@ -8,9 +8,9 @@ export const coefficients: IQuestions = {
       'female': 'female',
    },
    'snacks': {
-      no: 1, 
-      cold: 1.43,
-      hot: 1.575,
+      'no': 1, 
+      'cold': 1.43,
+      'hot': 1.575,
    },
    'place-of-bender': {
       'at-home': 1,

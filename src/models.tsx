@@ -12,3 +12,8 @@
    'smoking': any
    'goal': any
 }
+
+export interface IValidation {
+   status: boolean, 
+   error?: string,
+}

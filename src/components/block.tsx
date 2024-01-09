@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { IInputValidation, IQuestions } from '../models';
 
 type Block = 'common' | 'warning'
 
@@ -7,9 +8,10 @@ interface BlockProps {
    type?: Block
    title: string
    id?: string
+   validation?: any
 }
 
-export function Block({children, type, title, id}: BlockProps) {
+export function Block({ children, type, title, id, validation }: BlockProps) {
 
    var blockClass;
    switch(type) {
@@ -26,6 +28,7 @@ export function Block({children, type, title, id}: BlockProps) {
             <h4 className="block__title">{ title }</h4>
             <div className="block__content">
                {children}
+               {validation && (validation as any)[id as string].status === false && <p style={{ color: '#DC0000' }}>{(validation as any)[id as string].error }</p>}
             </div>
          </div>
       </div>

@@ -1,10 +1,10 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/header';
 import { Block } from '../components/block';
 import { RadioButton } from '../components/radioBatton';
 import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
-import { IQuestions } from '../models';
+import { IQuestions, IValidation } from '../models';
 import { coefficients } from '../data/app.data';
 import { useResults } from '../ResultsContext';
 
@@ -18,7 +18,6 @@ function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): 
          widmarkFactor = 0.9367 - 0.01240 * weight / (heightInCm / 100) ** 2;
          break;
    }
-   console.log(widmarkFactor)
    return widmarkFactor;
 }
 
@@ -38,44 +37,112 @@ function CalculatorPage() {
    const [smokingCoefficient, setSmokingCoefficient] = useState(0);
    const [goalCoefficient, setGoalCoefficient] = useState(0);
 
+   //? use results context
    const results = useResults();
 
    //? validation state
-   const [validationStatus, setValidationStatus] = useState<IQuestions>({
-      'gender': false,
-      'weight': false,
-      'height': false,
-      'drink-strength': false,
-      'snacks': false,
-      'place-of-bender': false,
-      'drinking-buddies': false,
-      'drinker-level': false,
-      'hangover-frequency': false,
-      'physical-activity': false,
-      'smoking': false,
-      'goal': false,
+   const [validation, setvalidation] = useState<IQuestions>({
+      'gender': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'weight': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'height': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'drink-strength': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'snacks': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'place-of-bender': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'drinking-buddies': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'drinker-level': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'hangover-frequency': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'physical-activity': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'smoking': {
+         status: false,
+         error: 'This field must be filled.',
+      },
+      'goal': {
+         status: false,
+         error: 'This field must be filled.',
+      },
    });
+
+   //? State variable to track form submission
+   const [submitted, setSubmitted] = useState(false);
 
    //? onChange handler
    function onChangeHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
       const blockName = e.target.closest('.block').id
       const value = (coefficients as any)[blockName][e.target.id.replace(e.target.name + '-', '')]
-      if ((validationStatus as any)[blockName] === false) setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: true }))
+      //* start validation
+      if ((validation as any)[blockName]['status'] === false) setvalidation((prevStatus) => ({
+         ...prevStatus, [blockName]: {
+            status: true,
+            error: '',
+         }
+      }))
+      //* end validation
       setState(value)
-      console.log(`${blockName}: ${value}`)
    }
 
    //? onInput handler
-   let timeout: any;
-   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-         const blockName = e.target.closest('.block').id
-         const value = e.target.value
+
+   const timeoutsRef = useRef<{ [key: string]: any }>({})
+
+   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void, validationCondition?: (e?: any) => IValidation): void {
+      const blockName = e.target.closest('.block').id;
+      const value = e.target.value;
+      //* Clear the existing timeout associated with the current input
+      clearTimeout(timeoutsRef.current[blockName])
+      //* Start a new timeout for the current input
+      timeoutsRef.current[blockName] = setTimeout(() => {
          setState(value);
-         if ((validationStatus as any)[blockName] === false) setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: true }))
-         if (value === '') setValidationStatus((prevStatus) => ({ ...prevStatus, [blockName]: false }))
-         console.log(`${blockName}: ${value}`)
+         //* start validation
+         var inputValidation: IValidation;
+         if (validationCondition) {
+            inputValidation = validationCondition(value);
+         } else {
+            inputValidation = {
+               status: true,
+               error: '',
+            };
+         }
+         if (value === '') {
+            setvalidation((prevStatus) => ({
+               ...prevStatus, [blockName]: {
+                  status: false,
+                  error: 'This field must be filled.',
+               }
+            }))
+         } else {
+            setvalidation((prevStatus) => ({ ...prevStatus, [blockName]: inputValidation }))
+         }
+         //* end validation
       }, 1000)
    }
 
@@ -83,11 +150,13 @@ function CalculatorPage() {
    const navigate = useNavigate();
 
    function calculateResults() {
+      //? Set form as submitted
+      setSubmitted(true);
 
       //? validate the form
-      const isValid = Object.values(validationStatus).every((status) => status);
+      const isValid = Object.values(validation).every(({ status }) => status);
       if (!isValid) {
-         const firstInvalidBlock = Object.keys(validationStatus).find((block) => !(validationStatus as any)[block]);
+         const firstInvalidBlock = Object.keys(validation).find((block) => !(validation as any)[block].status);
          const element = document.getElementById(`${firstInvalidBlock}`);
          element?.scrollIntoView({ behavior: 'smooth' });
          return;
@@ -101,9 +170,6 @@ function CalculatorPage() {
       //? set values to pass to the results page through the ResultsContext
       results?.drinkStrength.setValue(drinkStrength)
       results?.volumeToDrink.setValue(volumeOfDrink)
-
-      console.log('total coefficient:', totalCoefficient)
-      console.log('volume of drink to drink:', volumeOfDrink)
 
       navigate('/results');
    }
@@ -151,34 +217,70 @@ function CalculatorPage() {
          <main className="main">
             <div className="container">
                {/* //s Start Gender block */}
-               <Block title='Gender' id='gender'>
+               <Block validation={submitted && validation} title='Gender' id='gender'>
                   <RadioButton name='gender' id='gender-male' text='Male' onChange={(e) => onChangeHandler(e, setGender)} />
                   <RadioButton name='gender' id='gender-female' text='Female' onChange={(e) => onChangeHandler(e, setGender)} />
                </Block>
                {/* //s End Gender block */}
 
                {/* //s Start Weight block */}
-               <Block title='Weight (kg)' id='weight'>
-                  <input className="input input-question" placeholder='E.g. 80' onInput={(e) => onInputHandler(e, setWeight)} />
+               <Block validation={submitted && validation} title='Weight (kg)' id='weight'>
+                  <input className="input input-question" placeholder='40-250' onInput={(e) => onInputHandler(e, setWeight, (value) => {
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value > 250 || +value < 40)) return {
+                        status: false,
+                        error: 'Enter a valid value.'
+                     }
+                     if (!isNaN(value) && !isNaN(parseFloat(value))) return {
+                        status: true,
+                     }
+                     return {
+                        status: false,
+                        error: 'Enter a number.'
+                     }
+                  })} />
                </Block>
                {/* //s End Weight block */}
 
-               {/* //s Start Weight block */}
-               <Block title='Height (cm)' id='height'>
-                  <input className="input input-question" placeholder='E.g. 180' onInput={(e) => onInputHandler(e, setHeight)} />
+               {/* //s Start Height block */}
+               <Block validation={submitted && validation} title='Height (cm)' id='height'>
+                  <input className="input input-question" placeholder='140-220' onInput={(e) => onInputHandler(e, setHeight, (value) => {
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 140 || +value > 220)) return {
+                        status: false,
+                        error: 'Enter a valid value.'
+                     }
+                     if (!isNaN(value) && !isNaN(parseFloat(value))) return {
+                        status: true,
+                     }
+                     return {
+                        status: false,
+                        error: 'Enter a number.'
+                     }
+                  })} />
                </Block>
-               {/* //s End Weight block */}
+               {/* //s End Height block */}
 
                {/* //s Start Drink-strength block */}
-               <Block title='Drink strength' id='drink-strength'>
+               <Block validation={submitted && validation} title='Drink strength (%)' id='drink-strength'>
                   {/* <Input placeholder='E.g. Jägermeister' onInput={(e) => onInputHandler(e, setKindOfDrink)} />
                   <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Select custom strength' /> */}
-                  <input className="input input-question" placeholder='1-99%' onInput={(e) => onInputHandler(e, setDrinkStrength)} />
+                  <input className="input input-question" placeholder='1-99' onInput={(e) => onInputHandler(e, setDrinkStrength, (value) => {
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 1 || value > 99)) return {
+                        status: false,
+                        error: 'Enter a valid value.'
+                     }
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && +value > 0) return {
+                        status: true,
+                     }
+                     return {
+                        status: false,
+                        error: 'Enter a number.'
+                     }
+                  })} />
                </Block>
                {/* //s end Kind-of-drink block */}
 
                {/* //s Start Snacks block */}
-               <Block title='Snacks' id='snacks'>
+               <Block validation={submitted && validation} title='Snacks' id='snacks'>
                   <RadioButton name='snacks' id='snacks-no' text='No' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
                   <RadioButton name='snacks' id='snacks-cold' text='Cold snacks' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
                   <RadioButton name='snacks' id='snacks-hot' text='Hot snacks' onChange={(e) => onChangeHandler(e, setSnacksCoefficient)} />
@@ -186,7 +288,7 @@ function CalculatorPage() {
                {/* //s End Snacks block */}
 
                {/* //s Start Place-of-bender block */}
-               <Block title='Where will you drink?' id='place-of-bender'>
+               <Block validation={submitted && validation} title='Where will you drink?' id='place-of-bender'>
                   <RadioButton name='place-of-bender' id='place-of-bender-at-home' text='At home' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
                   <RadioButton name='place-of-bender' id='place-of-bender-in-a-bar' text='In a bar' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
                   <RadioButton name='place-of-bender' id='place-of-bender-outdoors' text='Outdoors' onChange={(e) => onChangeHandler(e, setPlaceOfBenderCoefficient)} />
@@ -194,14 +296,14 @@ function CalculatorPage() {
                {/* //s End Place-of-bender block */}
 
                {/* //s Start Drinking-buddies block */}
-               <Block title='Who wil you drink with?' id='drinking-buddies'>
+               <Block validation={submitted && validation} title='Who wil you drink with?' id='drinking-buddies'>
                   <RadioButton name='drinking-buddies' id='drinking-buddies-alone' text='Alone' onChange={(e) => onChangeHandler(e, setDrinkingBuddiesCoefficient)} />
                   <RadioButton name='drinking-buddies' id='drinking-buddies-with-friends' text='With friends' onChange={(e) => onChangeHandler(e, setDrinkingBuddiesCoefficient)} />
                </Block>
                {/* //s End Place-of-bender block */}
 
                {/* //s Start Drinker-level block */}
-               <Block title='Your level' id='drinker-level'>
+               <Block validation={submitted && validation} title='Your level' id='drinker-level'>
                   <RadioButton name='drinker-level' id='drinker-level-novice' text='Novice' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
                   <RadioButton name='drinker-level' id='drinker-level-advanced-beginner' text='Advanced beginner' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
                   <RadioButton name='drinker-level' id='drinker-level-competence' text='Competence' onChange={(e) => onChangeHandler(e, setDrinkerLevelCoefficient)} />
@@ -212,7 +314,7 @@ function CalculatorPage() {
                {/* //s End Drinker-level block */}
 
                {/* //s Start Hangover-frequency block */}
-               <Block title='How often do you have hangover?' id='hangover-frequency'>
+               <Block validation={submitted && validation} title='How often do you have hangover?' id='hangover-frequency'>
                   <RadioButton name='hangover-frequency' id='hangover-frequency-never' text='Never' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
                   <RadioButton name='hangover-frequency' id='hangover-frequency-hardly-ever' text='Hardly ever' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
                   <RadioButton name='hangover-frequency' id='hangover-frequency-rarely' text='Rarely' onChange={(e) => onChangeHandler(e, setHangoverFrequencyCoefficient)} />
@@ -222,21 +324,21 @@ function CalculatorPage() {
                {/* //s End Drinker-level block */}
 
                {/* //s Start Physical-activity block */}
-               <Block title='Will you have any physical activity?' id='physical-activity'>
+               <Block validation={submitted && validation} title='Will you have any physical activity?' id='physical-activity'>
                   <RadioButton name='physical-activity' id='physical-activity-yes' text='Yes' onChange={(e) => onChangeHandler(e, setPhysicalActivityCoefficient)} />
                   <RadioButton name='physical-activity' id='physical-activity-no' text='No' onChange={(e) => onChangeHandler(e, setPhysicalActivityCoefficient)} />
                </Block>
                {/* //s End Physical-activity block */}
 
                {/* //s Start Smoking block */}
-               <Block title='Do you smoke?' id='smoking'>
+               <Block validation={submitted && validation} title='Do you smoke?' id='smoking'>
                   <RadioButton name='smoking' id='smoking-yes' text='Yes' onChange={(e) => onChangeHandler(e, setSmokingCoefficient)} />
                   <RadioButton name='smoking' id='smoking-no' text='No' onChange={(e) => onChangeHandler(e, setSmokingCoefficient)} />
                </Block>
                {/* //s End Smoking block */}
 
                {/* //s Start Goal block */}
-               <Block title='The goal of the bender' id='goal'>
+               <Block validation={submitted && validation} title='The goal of the bender' id='goal'>
                   <RadioButton name='goal' id='goal-relax-a-bit' text='Relax a bit' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
                   <RadioButton name='goal' id='goal-relax' text='Relax' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
                   <RadioButton name='goal' id='goal-have-fun' text='Have fun' onChange={(e) => onChangeHandler(e, setGoalCoefficient)} />
