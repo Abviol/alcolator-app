@@ -9,7 +9,7 @@ Love attending parties, but always overdo it with alcohol? The calculator will h
 
 To give as precise result as possible it conseders a lot of factors like your alcohol tolerance or whether you smoke (described in more detail bellow). **Attention!** The results may vary from the real values due to special configurations of organisms.
 
-I used React and SCSS in order to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because it's for me it's much more comfortable to use TS with its types, interfaces and other features instead of JS.
+I used React and SCSS in order to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because for me it's much more comfortable to use TS with its types, interfaces and other features instead of JS.
 
 Fortunately, no problems were faced, though I had to conduct research in order to find formulas and the affect of different factors on alcohol absorption. 
 
