@@ -24,7 +24,7 @@ Fortunately, no problems were faced, though I had to conduct research in order t
 git clone https://github.com/Abviol/alcolator-app.git
 ```
 
-2. Download the last version of **Node.js and npm** (Node Package Manager) for you OS [here](https://nodejs.org/en). Skip if you have.
+2. Download the last version of **Node.js and npm** (Node Package Manager) for your OS [here](https://nodejs.org/en). Skip if you have.
 
 3. Navigate to the root folder and install dependencies.
 
