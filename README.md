@@ -1,7 +1,3 @@
-
-**# Alcolator - How Much Alcohol Should I Drink?
-
-Welcome to an alcohol calculator written in React v18 with TypeScript and SCSS.**
 # Alcolator - How Much Alcohol Should I Drink?
 
 
@@ -15,13 +11,13 @@ Welcome to an alcohol calculator!
 
 ## Description
 
-Love attending parties, but always overdo it with alcohol? The calculator will help you to calculate the amount of alcohol you should/can consume! Just give answers to all the questions on the main page and enjoy a party.
+Love attending parties, but always overdo it with alcohol? The calculator will help you calculate how much alcohol you should/can consume! Just give answers to all the questions on the main page and enjoy a party.
 
-To give as precise result as possible it conseders a lot of factors like your alcohol tolerance or whether you smoke (described in more detail bellow). **Attention!** The results may vary from the real values due to special configurations of organisms.
+To give as precise result as possible it considers a lot of factors like your alcohol tolerance or whether you smoke (described in more detail below). **Attention!** The results may vary from the real values due to special configurations of organisms.
 
-I used React and SCSS in order to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because for me it's much more comfortable to use TS with its types, interfaces and other features instead of JS.
+I used React and SCSS to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because it's for me it's much more comfortable to use TS with its types, interfaces, and other features instead of JS.
 
-Fortunately, no problems were faced, though I had to conduct research in order to find formulas and the affect of different factors on alcohol absorption. 
+Fortunately, no problems were faced, though I had to conduct research to find formulas and the effect of different factors on alcohol absorption. 
 
 
 ## Navigation
