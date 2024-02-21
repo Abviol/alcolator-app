@@ -1,5 +1,4 @@
 ﻿import * as React from 'react';
-import { IInputValidation, IQuestions } from '../models';
 
 type Block = 'common' | 'warning'
 
