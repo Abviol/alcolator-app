@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/header';
 import { Block } from '../components/block';
-import { RadioButton } from '../components/radioBatton';
+import { RadioButton } from '../components/radioButton';
 import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { IQuestions, IValidation } from '../models';
