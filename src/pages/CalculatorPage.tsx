@@ -8,6 +8,7 @@ import { IQuestions, IValidation } from '../models';
 import { coefficients } from '../data/app.data';
 import { useResults } from '../ResultsContext';
 
+//? Calculate Widmark factor. Is used for calculating volume of alcohol to drink. The formula is taken from this scientific article: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4361698/
 function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): number {
    let widmarkFactor: number = 0;
    switch (gender) {
@@ -22,6 +23,9 @@ function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): 
 }
 
 function CalculatorPage() {
+
+   //? use results context
+   const results = useResults();
 
    //? State variables for selected answers
    const [gender, setGender] = useState('');
@@ -40,7 +44,7 @@ function CalculatorPage() {
    //? use results context
    const results = useResults();
 
-   //? validation state
+   //? Validation state var. Is used for checking validations status and showing validation error for each block 
    const [validation, setvalidation] = useState<IQuestions>({
       'gender': {
          status: false,
@@ -92,10 +96,11 @@ function CalculatorPage() {
       },
    });
 
-   //? State variable to track form submission
+   //? Track form submission
    const [submitted, setSubmitted] = useState(false);
 
-   //? onChange handler
+   //? on change event handler
+   //? validate a field and set a new value for an appropriate state var
    function onChangeHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
       const blockName = e.target.closest('.block').id
       const value = (coefficients as any)[blockName][e.target.id.replace(e.target.name + '-', '')]
@@ -110,11 +115,12 @@ function CalculatorPage() {
       setState(value)
    }
 
-   //? onInput handler
-
+   //? timeout for delaying validation
    const timeoutsRef = useRef<{ [key: string]: any }>({})
 
-   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void, validationCondition?: (e?: any) => IValidation): void {
+   //? onInput handler
+   //? validate a field with an input and set a new value for an appropriate state var
+   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void, validationCondition?: (value?: any) => IValidation): void {
       const blockName = e.target.closest('.block').id;
       const value = e.target.value;
       //* Clear the existing timeout associated with the current input
@@ -124,15 +130,16 @@ function CalculatorPage() {
          setState(value);
          //* start validation
          var inputValidation: IValidation;
-         if (validationCondition) {
-            inputValidation = validationCondition(value);
-         } else {
-            inputValidation = {
+         if (validationCondition) { //* if present
+            inputValidation = validationCondition(value); //* validate the current value by set conditions
+         } 
+         else { //* if not
+            inputValidation = { //* is validated with any value
                status: true,
                error: '',
             };
          }
-         if (value === '') {
+         if (value === '') { //* default validation for all inputs: whether an input isn't empty
             setvalidation((prevStatus) => ({
                ...prevStatus, [blockName]: {
                   status: false,
@@ -149,25 +156,26 @@ function CalculatorPage() {
    //i Start calculation logic
    const navigate = useNavigate();
 
+   //? Calculate and redirect to the Results page
    function calculateResults() {
-      //? Set form as submitted
+      //* Set form as submitted
       setSubmitted(true);
 
-      //? validate the form
-      const isValid = Object.values(validation).every(({ status }) => status);
+      //* validate the form
+      const isValid = Object.values(validation).every(({ status }) => status); //* check all statuses
       if (!isValid) {
-         const firstInvalidBlock = Object.keys(validation).find((block) => !(validation as any)[block].status);
+         const firstInvalidBlock = Object.keys(validation).find((block) => !(validation as any)[block].status); //* find the first not validated block
          const element = document.getElementById(`${firstInvalidBlock}`);
          element?.scrollIntoView({ behavior: 'smooth' });
          return;
       }
 
-      //? calculate volume of drink to consume
+      //* calculate volume of drink to consume
       let widmarkFactor = calcWidmarkFactor(gender, weight, height)
       let totalCoefficient = snacksCoefficient * placeOfBenderCoefficient * drinkingBuddiesCoefficient * drinkerLevelCoefficient * hangoverFrequencyCoefficient * physicalActivityCoefficient * smokingCoefficient;
       let volumeOfDrink = Math.floor(goalCoefficient * widmarkFactor * weight / (drinkStrength / 100 * 0.789) * totalCoefficient);
 
-      //? set values to pass to the results page through the ResultsContext
+      //* set values to pass to the results page through the ResultsContext
       results?.drinkStrength.setValue(drinkStrength)
       results?.volumeToDrink.setValue(volumeOfDrink)
 
@@ -277,7 +285,7 @@ function CalculatorPage() {
                      }
                   })} />
                </Block>
-               {/* //s end Kind-of-drink block */}
+               {/* //s end Drink-strength block */}
 
                {/* //s Start Snacks block */}
                <Block validation={submitted && validation} title='Snacks' id='snacks'>
