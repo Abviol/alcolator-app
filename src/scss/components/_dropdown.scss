@@ -1,0 +1,59 @@
+﻿@import '../utilities/mixins';
+
+.dropdown {
+   display: block;
+   position: relative;
+
+   &__selected-display {
+      @include input-base;
+      background-color: map-get($map: $colors, $key: 'input-bg');
+      color: map-get($map: $colors, $key: 'input-text');
+      cursor: pointer;
+   }
+
+   &__selected-value {
+      @include hide;
+   }
+
+   &__list {
+      height: 0;
+      overflow: hidden;
+      transition: height .3s ease, margin .3s ease;
+      -webkit-transition: height .3s ease, margin .3s ease;
+      -moz-transition: height .3s ease, margin .3s ease;
+      &_show {
+         margin-top: 1rem;
+         transition: height .3s ease, margin .3s ease;
+         -webkit-transition: height .3s ease, margin .3s ease;
+         -moz-transition: height .3s ease, margin .3s ease;
+      }
+   }
+
+   &__container {
+      @include input-base;
+      background-color: map-get($map: $colors, $key: 'input-bg');
+   }
+      
+   &__item {
+      @include input-base;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      &:hover, &_selected {
+         background-color: #fcc5e0;
+      }
+      
+      &-value {
+         @include hide;
+      }
+
+      &-name {
+         color: map-get($map: $colors, $key: 'input-text');
+      }
+
+      &-tip {
+         padding-left: 1rem;
+         color: map-get($map: $colors, $key: 'input-placeholder');
+      }
+   }
+}
