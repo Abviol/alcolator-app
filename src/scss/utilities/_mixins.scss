@@ -54,3 +54,34 @@
    border: $common-size solid $color;
    border-bottom: $bottom-size solid $color;
 }
+
+/* common input styles (sizes, borders) */
+@mixin input-base {
+   display: block;
+   width: 100%;
+   padding: .5rem;
+   border: none;
+   border-radius: .25rem;
+   font: inherit;
+
+   @include respond-to('medium') {
+      padding: .75rem;
+      border-radius: .5rem;
+   }
+
+   @include respond-to('large') {
+      padding: 1rem;
+      border-radius: .75rem;
+   }
+}
+
+/* props for hiding element */
+@mixin hide {
+   display: none;
+   position: absolute;
+   width: 0;
+   height: 0;
+   opacity: 0;
+   pointer-events: none;
+   z-index: -999;
+}
