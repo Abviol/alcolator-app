@@ -49,17 +49,29 @@ function CalculatorPage() {
    const [customDrinkStrength, setCustomDrinkStrength] = useState(false);
    const dropdownValueRef = useRef(0);
    const inputValueRef = useRef('');
+
    //? set the initial values for dropdown and input refs
    useEffect(() => {
       dropdownValueRef.current = 0;
       inputValueRef.current = '';
-   }, [])
+   }, []);
 
    //? function to handle changing drinkStrength 
    //? based on selection (dropdown or input)
    const handleDrinkStrengthChange = () => {
-      setDrinkStrength(!customDrinkStrength ? +inputValueRef.current : dropdownValueRef.current);
+      setDrinkStrength(customDrinkStrength ? +inputValueRef.current : dropdownValueRef.current);
    };
+
+   //i for preventing unexpected behavior
+   //? update drinkStrength for calculations when on of these changes:
+   //* selected another drink, input value, changed mode of setting drink strength
+   useEffect(() => {
+      handleDrinkStrengthChange();
+   }, [
+      dropdownValueRef.current, 
+      inputValueRef.current, 
+      customDrinkStrength
+   ]);
 
    //? set already written by user value for drink strength input
    useEffect(() => {
@@ -306,10 +318,7 @@ function CalculatorPage() {
                         onChangeHandler(e, setDrinkStrength, e.target.value);
                      }}
                   />
-                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Set drink strength manually' onChange={(e) => {
-                     setCustomDrinkStrength(e.target.checked);
-                     handleDrinkStrengthChange();
-                  }} />
+                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Set drink strength manually' onChange={(e) => {setCustomDrinkStrength(e.target.checked)}} />
                   {customDrinkStrength && <input className="input input-question" id='custom-drink-strength-input' placeholder='1-99' onInput={(e) => {
                      inputValueRef.current = e.currentTarget.value; // Store the input value
                      // handleDrinkStrengthChange();
