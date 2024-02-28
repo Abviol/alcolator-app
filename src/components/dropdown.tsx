@@ -16,16 +16,16 @@ export function Dropdown({ placeholder, value, items, onChangeHandler }: Dropdow
 
    //? toggle dropdown menu
    const toggleList = (e: MouseEvent) => {
-      let list = document.querySelector<HTMLUListElement>('.dropdown__list'),
-         listContainer = list?.querySelector<HTMLDivElement>('.dropdown__container'),
-         listContainerHeight = `${listContainer?.offsetHeight}px`;
-      if (list) {
+      let listContainer = document.querySelector<HTMLDivElement>('.dropdown__container'),
+         list = listContainer?.querySelector<HTMLUListElement>('.dropdown__list'),
+         listHeight = `${list?.offsetHeight}px`;
+      if (listContainer) {
          if ((e.target as HTMLElement).closest('.dropdown__selected-display')) {
-            list.classList.toggle('dropdown__list_show');
-            list.style.height = list.classList.contains('dropdown__list_show') ? listContainerHeight : '0';
+            listContainer.classList.toggle('dropdown__container_show');
+            listContainer.style.height = listContainer.classList.contains('dropdown__container_show') ? listHeight : '0';
          } else {
-            list.classList.remove('dropdown__list_show');
-            list.style.height = '0';
+            listContainer.classList.remove('dropdown__container_show');
+            listContainer.style.height = '0';
          }
       }
    };
@@ -71,8 +71,8 @@ export function Dropdown({ placeholder, value, items, onChangeHandler }: Dropdow
       <div className='dropdown'>
          <input type="text" className="dropdown__selected-value" value={value} onInput={onChangeHandler} onChange={onChangeHandler} />
          <span className="dropdown__selected-display">{placeholder}</span>
-         <ul className="dropdown__list">
-            <div className="dropdown__container">
+         <div className="dropdown__container">
+            <ul className="dropdown__list">
                {items.map((item: DropdownItem, index: number) => (
                   <li className="dropdown__item" onClick={(e) => selectValue(e)} key={index}>
                      <input type="text" className="dropdown__item-value" value={item.itemValue ? item.itemValue : item.itemName} readOnly />
@@ -80,8 +80,8 @@ export function Dropdown({ placeholder, value, items, onChangeHandler }: Dropdow
                      {item.itemValue && <span className="dropdown__item-tip">{item.itemValue}</span>}
                   </li>
                ))}
-            </div>
-         </ul>
+            </ul>
+         </div>
       </div>
    );
 }

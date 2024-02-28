@@ -15,7 +15,7 @@
       @include hide;
    }
 
-   &__list {
+   &__container {
       height: 0;
       overflow: hidden;
       transition: height .3s ease, margin .3s ease;
@@ -29,7 +29,7 @@
       }
    }
 
-   &__container {
+   &__list {
       @include input-base;
       background-color: map-get($map: $colors, $key: 'input-bg');
    }
