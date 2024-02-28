@@ -409,7 +409,7 @@ function CalculatorPage() {
                {/* //s End Smoking block */}
 
                <div className="align-center">
-                  <button type='submit' name='Calculate' className='button button_submit' onClick={calculateResults}>
+                  <button type='submit' className='button button_submit' onClick={calculateResults}>
                      <p className="button__text">
                         Calculate
                      </p>
@@ -419,7 +419,7 @@ function CalculatorPage() {
             </div>
          </main>
 
-         <button className="button button_up" name='Go up' onClick={goUp}>
+         <button className="button button_up" title='Go up' onClick={goUp}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                <path d="M12 13.9142L16.7929 18.7071L18.2071 17.2929L12 11.0858L5.79291 17.2929L7.20712 18.7071L12 13.9142ZM6.00001 7L18 7V9L6.00001 9L6.00001 7Z"></path>
             </svg>
