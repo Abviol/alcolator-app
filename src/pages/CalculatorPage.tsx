@@ -41,8 +41,6 @@ function CalculatorPage() {
    const [smokingCoefficient, setSmokingCoefficient] = useState(0);
    const [goalCoefficient, setGoalCoefficient] = useState(0);
 
-   //? use results context
-   const results = useResults();
 
    //? Validation state var. Is used for checking validations status and showing validation error for each block 
    const [validation, setvalidation] = useState<IQuestions>({
