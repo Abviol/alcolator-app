@@ -5,8 +5,9 @@ import { RadioButton } from '../components/radioButton';
 import { Checkbox } from '../components/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { IQuestions, IValidation } from '../models';
-import { coefficients } from '../data/app.data';
+import { coefficients, drinks } from '../data/app.data';
 import { useResults } from '../ResultsContext';
+import { Dropdown } from '../components/dropdown';
 
 //? Calculate Widmark factor. Is used for calculating volume of alcohol to drink. The formula is taken from this scientific article: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4361698/
 function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): number {
@@ -27,6 +28,9 @@ function CalculatorPage() {
    //? use results context
    const results = useResults();
 
+   //? Track form submission
+   const [submitted, setSubmitted] = useState(false);
+
    //? State variables for selected answers
    const [gender, setGender] = useState('');
    const [weight, setWeight] = useState(0);
@@ -41,6 +45,41 @@ function CalculatorPage() {
    const [smokingCoefficient, setSmokingCoefficient] = useState(0);
    const [goalCoefficient, setGoalCoefficient] = useState(0);
 
+   //? for dynamic displaying input and configuring validation in the Drink Strength block
+   const [customDrinkStrength, setCustomDrinkStrength] = useState(false);
+   const dropdownValueRef = useRef(0);
+   const inputValueRef = useRef('');
+
+   //? set the initial values for dropdown and input refs
+   useEffect(() => {
+      dropdownValueRef.current = 0;
+      inputValueRef.current = '';
+   }, []);
+
+   //? function to handle changing drinkStrength 
+   //? based on selection (dropdown or input)
+   const handleDrinkStrengthChange = () => {
+      setDrinkStrength(customDrinkStrength ? +inputValueRef.current : dropdownValueRef.current);
+   };
+
+   //i for preventing unexpected behavior
+   //? update drinkStrength for calculations when on of these changes:
+   //* selected another drink, input value, changed mode of setting drink strength
+   useEffect(() => {
+      handleDrinkStrengthChange();
+   }, [
+      dropdownValueRef.current, 
+      inputValueRef.current, 
+      customDrinkStrength
+   ]);
+
+   //? set already written by user value for drink strength input
+   useEffect(() => {
+      const customDrinkStrengthInput = document.querySelector<HTMLInputElement>('#custom-drink-strength-input');
+      if (customDrinkStrengthInput && customDrinkStrength) {
+         customDrinkStrengthInput.value = inputValueRef.current + '';
+      }
+   }, [customDrinkStrength]);
 
    //? Validation state var. Is used for checking validations status and showing validation error for each block 
    const [validation, setvalidation] = useState<IQuestions>({
@@ -94,14 +133,14 @@ function CalculatorPage() {
       },
    });
 
-   //? Track form submission
-   const [submitted, setSubmitted] = useState(false);
-
    //? on change event handler
    //? validate a field and set a new value for an appropriate state var
-   function onChangeHandler(e: any, setState: (value: React.SetStateAction<any>) => void): void {
+   function onChangeHandler(e: any, setState: (value: React.SetStateAction<any>) => void, value?: any): void {
       const blockName = e.target.closest('.block').id
-      const value = (coefficients as any)[blockName][e.target.id.replace(e.target.name + '-', '')]
+      if (!value) { //* if state change is preferable
+         value = (coefficients as any)[blockName][e.target.id.replace(e.target.name + '-', '')]
+      }
+      setState(value);
       //* start validation
       if ((validation as any)[blockName]['status'] === false) setvalidation((prevStatus) => ({
          ...prevStatus, [blockName]: {
@@ -110,7 +149,6 @@ function CalculatorPage() {
          }
       }))
       //* end validation
-      setState(value)
    }
 
    //? timeout for delaying validation
@@ -130,7 +168,7 @@ function CalculatorPage() {
          var inputValidation: IValidation;
          if (validationCondition) { //* if present
             inputValidation = validationCondition(value); //* validate the current value by set conditions
-         } 
+         }
          else { //* if not
             inputValidation = { //* is validated with any value
                status: true,
@@ -265,25 +303,42 @@ function CalculatorPage() {
                </Block>
                {/* //s End Height block */}
 
-               {/* //s Start Drink-strength block */}
-               <Block validation={submitted && validation} title='Drink strength (%)' id='drink-strength'>
-                  {/* <Input placeholder='E.g. Jägermeister' onInput={(e) => onInputHandler(e, setKindOfDrink)} />
-                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Select custom strength' /> */}
-                  <input className="input input-question" placeholder='1-99' onInput={(e) => onInputHandler(e, setDrinkStrength, (value) => {
-                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 1 || value > 99)) return {
-                        status: false,
-                        error: 'Enter a valid value.'
-                     }
-                     if (!isNaN(value) && !isNaN(parseFloat(value)) && +value > 0) return {
-                        status: true,
-                     }
-                     return {
-                        status: false,
-                        error: 'Enter a number.'
-                     }
-                  })} />
+               {/* //s Start Drink block */}
+               <Block validation={submitted && validation} title='Drink' id='drink-strength'>
+                  <Dropdown
+                     placeholder='Select a drink'
+                     value={drinkStrength}
+                     items={drinks.map(drink => ({ //* transform drinks object's inteface from IDrink[] to DropdownItem[]
+                        itemName: drink.drinkName,
+                        itemValue: drink.drinkStrength
+                     }))}
+                     onChangeHandler={(e) => {
+                        dropdownValueRef.current = e.target.value;
+                        // handleDrinkStrengthChange();
+                        onChangeHandler(e, setDrinkStrength, e.target.value);
+                     }}
+                  />
+                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Set drink strength manually' onChange={(e) => {setCustomDrinkStrength(e.target.checked)}} />
+                  {customDrinkStrength && <input className="input input-question" id='custom-drink-strength-input' placeholder='1-99' onInput={(e) => {
+                     inputValueRef.current = e.currentTarget.value; // Store the input value
+                     // handleDrinkStrengthChange();
+
+                     onInputHandler(e, setDrinkStrength, (value) => {
+                        if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 1 || value > 99)) return {
+                           status: false,
+                           error: 'Enter a valid value.'
+                        }
+                        if (!isNaN(value) && !isNaN(parseFloat(value)) && +value > 0) return {
+                           status: true,
+                        }
+                        return {
+                           status: false,
+                           error: 'Enter a number.'
+                        }
+                     })
+                  }} />}
                </Block>
-               {/* //s end Drink-strength block */}
+               {/* //s end Drink block */}
 
                {/* //s Start Snacks block */}
                <Block validation={submitted && validation} title='Snacks' id='snacks'>
@@ -364,7 +419,7 @@ function CalculatorPage() {
             </div>
          </main>
 
-         <button className="button button_up" onClick={goUp}>
+         <button className="button button_up" title='Go up' onClick={goUp}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                <path d="M12 13.9142L16.7929 18.7071L18.2071 17.2929L12 11.0858L5.79291 17.2929L7.20712 18.7071L12 13.9142ZM6.00001 7L18 7V9L6.00001 9L6.00001 7Z"></path>
             </svg>

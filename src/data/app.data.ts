@@ -1,4 +1,4 @@
-﻿import { IQuestions } from "../models"
+﻿import { IDrink, IQuestions } from "../models"
 
 export const app_title:string = 'Alcolator'
 
@@ -52,3 +52,62 @@ export const coefficients: IQuestions = {
       'get-drunk-as-hell': 1.7,
    },
 }
+
+export const drinks: IDrink[] = [
+   {
+      drinkName: 'Absinthe ',
+      drinkStrength: 70
+   },
+   {
+      drinkName: 'Cognac ',
+      drinkStrength: 40
+   },
+   {
+      drinkName: 'Jack Daniel’s – Old No. 7',
+      drinkStrength: 40
+   },
+   {
+      drinkName: 'Bacardi White',
+      drinkStrength: 40
+   },
+   {
+      drinkName: 'Bacardi Gold',
+      drinkStrength: 40
+   },
+   {
+      drinkName: 'Vodka',
+      drinkStrength: 40
+   },
+   {
+      drinkName: 'Tequila',
+      drinkStrength: 38
+   },
+   {
+      drinkName: 'Gin London',
+      drinkStrength: 37.5
+   },
+   {
+      drinkName: 'Bacardi Black',
+      drinkStrength: 37.5
+   },
+   {
+      drinkName: 'Jägermeister',
+      drinkStrength: 35
+   },
+   {
+      drinkName: 'Port wine',
+      drinkStrength: 20
+   },
+   {
+      drinkName: 'Baileys ',
+      drinkStrength: 17 
+   },
+   {
+      drinkName: 'Wine',
+      drinkStrength: 15
+   },
+   {
+      drinkName: 'Beer',
+      drinkStrength: 5
+   },
+]
