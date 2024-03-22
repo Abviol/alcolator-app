@@ -13,7 +13,7 @@
    'goal': any
 };
 
-export interface IValidation {
+export interface IValidationState {
    status: boolean, 
    error?: string,
 };
