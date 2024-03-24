@@ -1,13 +1,17 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
+import { useResults } from '../ResultsContext';
+import { useNavigate } from 'react-router-dom';
+import { coefficients, drinks } from '../data/app.data';
+import { notFilled, notNumber, notValid, validated, selectValidation } from '../redux/slices/validationSlice';
+
+import { IQuestions, IValidationState, ValidationStatusTypes, ValidationStatuses } from '../models';
+
 import { Header } from '../components/header';
 import { Block } from '../components/block';
 import { RadioButton } from '../components/radioButton';
 import { Checkbox } from '../components/checkbox';
-import { useNavigate } from 'react-router-dom';
-import { IQuestions, IValidation } from '../models';
-import { coefficients, drinks } from '../data/app.data';
-import { useResults } from '../ResultsContext';
 import { Dropdown } from '../components/dropdown';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 //? Calculate Widmark factor. Is used for calculating volume of alcohol to drink. The formula is taken from this scientific article: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4361698/
 function calcWidmarkFactor(gender: string, weight: number, heightInCm: number): number {
@@ -68,8 +72,8 @@ function CalculatorPage() {
    useEffect(() => {
       handleDrinkStrengthChange();
    }, [
-      dropdownValueRef.current, 
-      inputValueRef.current, 
+      dropdownValueRef.current,
+      inputValueRef.current,
       customDrinkStrength
    ]);
 
@@ -82,56 +86,8 @@ function CalculatorPage() {
    }, [customDrinkStrength]);
 
    //? Validation state var. Is used for checking validations status and showing validation error for each block 
-   const [validation, setvalidation] = useState<IQuestions>({
-      'gender': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'weight': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'height': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'drink-strength': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'snacks': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'place-of-bender': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'drinking-buddies': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'drinker-level': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'hangover-frequency': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'physical-activity': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'smoking': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-      'goal': {
-         status: false,
-         error: 'This field must be filled.',
-      },
-   });
+   const validation = useAppSelector(selectValidation);
+   const validationDispatch = useAppDispatch();
 
    //? on change event handler
    //? validate a field and set a new value for an appropriate state var
@@ -142,12 +98,7 @@ function CalculatorPage() {
       }
       setState(value);
       //* start validation
-      if ((validation as any)[blockName]['status'] === false) setvalidation((prevStatus) => ({
-         ...prevStatus, [blockName]: {
-            status: true,
-            error: '',
-         }
-      }))
+      if ((validation as any)[blockName]['status'] === false) validationDispatch(validated(blockName));
       //* end validation
    }
 
@@ -156,35 +107,43 @@ function CalculatorPage() {
 
    //? onInput handler
    //? validate a field with an input and set a new value for an appropriate state var
-   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void, validationCondition?: (value?: any) => IValidation): void {
+   function onInputHandler(e: any, setState: (value: React.SetStateAction<any>) => void, customValidation?: (value: any) => ValidationStatusTypes): void {
       const blockName = e.target.closest('.block').id;
       const value = e.target.value;
+
       //* Clear the existing timeout associated with the current input
       clearTimeout(timeoutsRef.current[blockName])
+      
       //* Start a new timeout for the current input
       timeoutsRef.current[blockName] = setTimeout(() => {
          setState(value);
+         console.log(validation)
+
          //* start validation
-         var inputValidation: IValidation;
-         if (validationCondition) { //* if present
-            inputValidation = validationCondition(value); //* validate the current value by set conditions
+         if (value == '') { //? if the input is not filled
+            validationDispatch(notFilled(blockName));
+            return;
          }
-         else { //* if not
-            inputValidation = { //* is validated with any value
-               status: true,
-               error: '',
-            };
+         if (customValidation) { //? if custom validation is set
+            const validationStatus: ValidationStatusTypes = customValidation(value);
+            switch (validationStatus) {
+               case ValidationStatuses.NOT_NUMBER:
+                  validationDispatch(notNumber(blockName));
+                  return;
+               case ValidationStatuses.NOT_VALID:
+                  validationDispatch(notValid(blockName));
+                  return;
+               case ValidationStatuses.VALIDATED:
+                  validationDispatch(validated(blockName));
+                  return;
+               default: 
+                  throw new Error('Not a valid validation status.');
+                  console.error('Not a valid validation status.');
+                  return;
+            }
          }
-         if (value === '') { //* default validation for all inputs: whether an input isn't empty
-            setvalidation((prevStatus) => ({
-               ...prevStatus, [blockName]: {
-                  status: false,
-                  error: 'This field must be filled.',
-               }
-            }))
-         } else {
-            setvalidation((prevStatus) => ({ ...prevStatus, [blockName]: inputValidation }))
-         }
+         validationDispatch(validated(blockName));
+         return;
          //* end validation
       }, 1000)
    }
@@ -197,7 +156,7 @@ function CalculatorPage() {
       //* Set form as submitted
       setSubmitted(true);
 
-      //* validate the form
+      // * validate the form
       const isValid = Object.values(validation).every(({ status }) => status); //* check all statuses
       if (!isValid) {
          const firstInvalidBlock = Object.keys(validation).find((block) => !(validation as any)[block].status); //* find the first not validated block
@@ -270,17 +229,9 @@ function CalculatorPage() {
                {/* //s Start Weight block */}
                <Block validation={submitted && validation} title='Weight (kg)' id='weight'>
                   <input className="input input-question" placeholder='40-250' onInput={(e) => onInputHandler(e, setWeight, (value) => {
-                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value > 250 || +value < 40)) return {
-                        status: false,
-                        error: 'Enter a valid value.'
-                     }
-                     if (!isNaN(value) && !isNaN(parseFloat(value))) return {
-                        status: true,
-                     }
-                     return {
-                        status: false,
-                        error: 'Enter a number.'
-                     }
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value > 250 || +value < 40)) return ValidationStatuses.NOT_VALID;
+                     if (!isNaN(value) && !isNaN(parseFloat(value))) return ValidationStatuses.VALIDATED;
+                     return ValidationStatuses.NOT_NUMBER;
                   })} />
                </Block>
                {/* //s End Weight block */}
@@ -288,17 +239,9 @@ function CalculatorPage() {
                {/* //s Start Height block */}
                <Block validation={submitted && validation} title='Height (cm)' id='height'>
                   <input className="input input-question" placeholder='140-220' onInput={(e) => onInputHandler(e, setHeight, (value) => {
-                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 140 || +value > 220)) return {
-                        status: false,
-                        error: 'Enter a valid value.'
-                     }
-                     if (!isNaN(value) && !isNaN(parseFloat(value))) return {
-                        status: true,
-                     }
-                     return {
-                        status: false,
-                        error: 'Enter a number.'
-                     }
+                     if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 140 || +value > 220)) return ValidationStatuses.NOT_VALID;
+                     if (!isNaN(value) && !isNaN(parseFloat(value))) return ValidationStatuses.VALIDATED;
+                     return ValidationStatuses.NOT_NUMBER;
                   })} />
                </Block>
                {/* //s End Height block */}
@@ -314,27 +257,18 @@ function CalculatorPage() {
                      }))}
                      onChangeHandler={(e) => {
                         dropdownValueRef.current = e.target.value;
-                        // handleDrinkStrengthChange();
                         onChangeHandler(e, setDrinkStrength, e.target.value);
                      }}
                   />
-                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Set drink strength manually' onChange={(e) => {setCustomDrinkStrength(e.target.checked)}} />
+                  <Checkbox name='custom-drink-strength' id='custom-drink-strength-1' text='Set drink strength manually' onChange={(e) => { setCustomDrinkStrength(e.target.checked) }} />
                   {customDrinkStrength && <input className="input input-question" id='custom-drink-strength-input' placeholder='1-99' onInput={(e) => {
                      inputValueRef.current = e.currentTarget.value; // Store the input value
                      // handleDrinkStrengthChange();
 
                      onInputHandler(e, setDrinkStrength, (value) => {
-                        if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 1 || value > 99)) return {
-                           status: false,
-                           error: 'Enter a valid value.'
-                        }
-                        if (!isNaN(value) && !isNaN(parseFloat(value)) && +value > 0) return {
-                           status: true,
-                        }
-                        return {
-                           status: false,
-                           error: 'Enter a number.'
-                        }
+                        if (!isNaN(value) && !isNaN(parseFloat(value)) && (+value < 1 || value > 99)) return ValidationStatuses.NOT_VALID;
+                        if (!isNaN(value) && !isNaN(parseFloat(value)) && +value > 0) return ValidationStatuses.VALIDATED;
+                        return ValidationStatuses.NOT_NUMBER;
                      })
                   }} />}
                </Block>

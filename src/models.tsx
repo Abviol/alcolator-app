@@ -1,4 +1,4 @@
-﻿export interface IQuestions {
+export interface IQuestions {
    'gender'?: any
    'weight'?: any
    'height'?: any,
@@ -13,11 +13,19 @@
    'goal': any
 };
 
-export interface IValidation {
+export interface IValidationState {
    status: boolean, 
    error?: string,
 };
 
+export type ValidationStatusTypes = 'NOT_VALID' | 'NOT_NUMBER' | 'NOT_FILLED' | 'VALIDATED';
+
+export enum ValidationStatuses {
+   NOT_FILLED = 'NOT_FILLED',
+   NOT_VALID = 'NOT_VALID', 
+   NOT_NUMBER = 'NOT_NUMBER',
+   VALIDATED = 'VALIDATED',
+};
 
 export interface IDrink {
    drinkName: string
