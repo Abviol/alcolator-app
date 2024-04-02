@@ -3,27 +3,31 @@
 
 Welcome to an alcohol calculator!
 
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)<space>
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase) ![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)<space>
 
 ## Description
 
-Love attending parties, but always overdo it with alcohol? The calculator will help you calculate how much alcohol you should/can consume! Just give answers to all the questions on the main page and enjoy a party.
+Love attending parties, but always overdo it with alcohol? The calculator will help you calculate how much alcohol you should/can consume! Just give answers to all the questions on the main page and enjoy a party. As simple as that!
 
 To give as precise result as possible it considers a lot of factors like your alcohol tolerance or whether you smoke (described in more detail below). **Attention!** The results may vary from the real values due to special configurations of organisms.
 
-I used React and SCSS to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because it's for me it's much more comfortable to use TS with its types, interfaces, and other features instead of JS.
+I used React and SCSS to enhance my proficiency in these technologies. Why React *TypeScript*? Well, because it's for me it's much more comfortable to use TS with its types, interfaces, and other features instead of JS. Avoiding potentional code issues is cool, isn't it?
 
-Fortunately, no problems were faced, though I had to conduct research to find formulas and the effect of different factors on alcohol absorption. 
+A research was conducted in order to find formulas and the effect of different factors on alcohol absorption. 
 
 
 ## Navigation
 1. [Description](#description)
-2. [Installation and Running](#installation-and-running)
-3. [Formulas and Factors](#formulas-and-factors)
+1. [Installation and Running](#installation-and-running)
+1. [Last Update](#last-update)
+    - [New Featrue](#new-feature)
+    - [Other Updates](#other-updates)
+1. [Formulas and Factors](#formulas-and-factors)
     - [Formulas](#formulas)
     - [Factors](#factors)
-4. [Usage](#usage)
-5. [Sources](#sources)
+
+1. [Usage](#usage)
+1. [Sources](#sources)
 
 
 
@@ -47,6 +51,34 @@ npm install
 ```bash
 npm start
 ```
+
+## Last Update
+ 
+### New Feature
+
+Now you can set drink strength with choosing an alcohol drink from the list of 14 drinks most popular drinks! It includes:
+- Absinthe (70%)
+- Cognac (40%)
+- Jack Daniel's - Old No. 7 (40%)
+- Bacardi White (40%)
+- Bacardi Gold (40%)
+- Vodka (40%)
+- Tequila (38%)
+- Gin London (37.5%)
+- Bacardi Black (37.5%)
+- Jägermeister (35%)
+- Port wine (20%)
+- Baileys (17%)
+- Wine (15%)
+- Beer (5%)
+
+You still can set drink strength manually.
+
+### Other Updates
+
+1. **Redux** and **Redux Toolkit** were implemented into the project instead of useState React hooks for form validation and storing entered values.
+2. The project was deployed to **Firebase**.
+
 ## Formulas and Factors
 
 ### Formulas
@@ -94,7 +126,7 @@ _Weight (kg) / Height^2 (m^2)_
 
 ## Usage
 
-See the video with a showcase [here](https://youtu.be/HfU_CilNmUg).
+See the video with a showcase [here](https://youtu.be/k3PjvrT9f-I).
 
 
 ## Sources
