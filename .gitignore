@@ -13,7 +13,6 @@
 
 # firebase
 .firebase
-/public
 .firebaserc
 firebase.json
 
