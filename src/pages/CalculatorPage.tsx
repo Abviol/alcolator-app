@@ -138,8 +138,6 @@ function CalculatorPage() {
                   return;
                default: 
                   throw new Error('Not a valid validation status.');
-                  console.error('Not a valid validation status.');
-                  return;
             }
          }
          validationDispatch(validated(blockName));
