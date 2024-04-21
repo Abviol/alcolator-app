@@ -1,4 +1,4 @@
-# Alcolator - How Much Alcohol Should I Drink?
+# Alcolator - Alcohol Consumption Calculator
 
 
 Welcome to an alcohol calculator!
@@ -7,7 +7,7 @@ Welcome to an alcohol calculator!
 
 ## Description
 
-Love attending parties, but always overdo it with alcohol? The calculator will help you calculate how much alcohol you should/can consume! Just give answers to all the questions on the main page and enjoy a party. As simple as that!
+Love attending parties, but always overdo it with alcohol? Don't worry, the calculator will help you calculate how much alcohol you should/can drink! Just give answers to all the questions and enjoy a party with no worries about tomorrow's hangover, as simple as that!
 
 To give as precise result as possible it considers a lot of factors like your alcohol tolerance or whether you smoke (described in more detail below). **Attention!** The results may vary from the real values due to special configurations of organisms.
 
